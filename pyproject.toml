@@ -1,0 +1,104 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bmi-map"
+description = "create BMI language mappings"
+authors = [
+  {email = "mcflugen@gmail.com"},
+  {name = "Eric Hutton"},
+]
+maintainers = [
+  {email = "mcflugen@gmail.com"},
+  {name = "Eric Hutton"},
+]
+keywords = [
+  "python",
+  "utility",
+  "bmi",
+]
+license = {text = "MIT"}
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Operating System :: OS Independent",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: Implementation :: CPython",
+]
+requires-python = ">=3.11"
+dependencies = []
+dynamic = ["readme", "version"]
+
+[project.urls]
+homepage = "https://github.com/mcflugen/bmi-map"
+documentation = "https://github.com/mcflugen/bmi-map/blob/main/README.md"
+repository = "https://github.com/mcflugen/bmi-map"
+changelog = "https://github.com/mcflugen/bmi-map/blob/main/CHANGES.md"
+
+[project.optional-dependencies]
+color = ["pygments"]
+dev = ["nox"]
+testing = ["pytest"]
+
+[project.scripts]
+bmi-map = "bmi_map:main"
+
+[tool.coverage.run]
+relative_files = true
+
+[tool.setuptools]
+py-modules = ["bmi_map"]
+
+[tool.setuptools.dynamic]
+readme = {file = ["README.md", "AUTHORS.md", "CHANGES.md"], content-type="text/markdown"}
+version = {attr = "bmi_map.__version__"}
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+testpaths = ["tests"]
+norecursedirs = [".*", "*.egg*", "build", "dist"]
+addopts = [
+  "--tb=native",
+  "--strict",
+  "--durations=16",
+  "--doctest-modules",
+  "-vvv",
+]
+doctest_optionflags = [
+  "NORMALIZE_WHITESPACE",
+  "IGNORE_EXCEPTION_DETAIL",
+  "ALLOW_UNICODE"
+]
+
+[tool.isort]
+combine_as_imports = true
+profile = "black"
+
+[tool.towncrier]
+directory = "news"
+name = "bmi-map"
+filename = "CHANGES.md"
+create_add_extension = false
+single_file = true
+underlines = [
+    "",
+    "",
+    "",
+]
+start_string = """
+<!-- towncrier release notes start -->
+"""
+template = "news/changelog_template.jinja"
+issue_format = "[#{issue}](https://github.com/mcflugen/bmi-map/issues/{issue})"
+title_format = "## {version} ({project_date})"
+type = [
+  {name="🍰 New Features", directory="feature", showcontent=true},
+  {name="🛠️ Bug Fixes", directory="bugfix", showcontent=true},
+  {name="📖 Documentation Enhancements", directory="docs", showcontent=true},
+  {name="🔩 Other Changes and Additions", directory="misc", showcontent=true},
+]
