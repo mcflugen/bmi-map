@@ -60,7 +60,7 @@ version = {attr = "bmi_map.__version__"}
 
 [tool.pytest.ini_options]
 minversion = "6.0"
-testpaths = ["tests"]
+testpaths = ["tests", "bmi_map.py"]
 norecursedirs = [".*", "*.egg*", "build", "dist"]
 addopts = [
   "--tb=native",
