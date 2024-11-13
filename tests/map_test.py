@@ -52,6 +52,25 @@ def test_c_array_intent(intent, expected):
 
 
 @pytest.mark.parametrize(
+    "dims,expected",
+    [
+        ("m", "int f(void* self, const int* a, const int m, const int* b);"),
+        (
+            "m,n",
+            "int f(void* self, const int* a, const int m, const int n, const int* b);",
+        ),
+    ],
+)
+def test_c_array_with_dimensions(dims, expected):
+    params = [
+        {"name": "a", "type": f"array[int,{dims}]", "intent": "in"},
+        {"name": "b", "type": "array[int]", "intent": "in"},
+    ]
+    mapped_func = bmi_map({"f": {"params": params}}, to="c")
+    assert mapped_func[0] == expected
+
+
+@pytest.mark.parametrize(
     "intent,expected",
     [
         ("in", "void Foo(const int a);"),
