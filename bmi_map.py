@@ -4,6 +4,7 @@ import argparse
 import re
 import sys
 import tomllib
+from collections import Counter
 from collections.abc import Sequence
 from functools import partial
 from typing import Any
@@ -185,6 +186,12 @@ class Parameter:
             raise ValueError(
                 f"array type not understood ({dtype} not one of"
                 f" {', '.join(repr(t) for t in sorted(Parameter.valid_array_types))})"
+            )
+        repeated_dims = [dim for dim, count in Counter(dims).items() if count > 1]
+        if repeated_dims:
+            raise ValueError(
+                f"repeated dimension{'s' if len(repeated_dims) > 1 else ''}"
+                f" ({', '.join(repeated_dims)})"
             )
 
         return f"array[{', '.join((dtype,) + dims)}]"
