@@ -4,6 +4,7 @@ import argparse
 import re
 import sys
 import tomllib
+from collections import Counter
 from collections.abc import Sequence
 from functools import partial
 from typing import Any
@@ -180,14 +181,20 @@ class Parameter:
         if not dtype.startswith("array"):
             raise ValueError("not an array type ({dtype})")
 
-        rank, dtype = Parameter.split_array_type(dtype)
+        dtype, dims = Parameter.split_array_type(dtype)
         if dtype not in Parameter.valid_array_types:
             raise ValueError(
                 f"array type not understood ({dtype} not one of"
                 f" {', '.join(repr(t) for t in sorted(Parameter.valid_array_types))})"
             )
+        repeated_dims = [dim for dim, count in Counter(dims).items() if count > 1]
+        if repeated_dims:
+            raise ValueError(
+                f"repeated dimension{'s' if len(repeated_dims) > 1 else ''}"
+                f" ({', '.join(repeated_dims)})"
+            )
 
-        return f"array[{rank!s}, {dtype}]"
+        return f"array[{', '.join((dtype,) + dims)}]"
 
     @staticmethod
     def validate_type(dtype: str) -> str:
@@ -197,11 +204,17 @@ class Parameter:
             return Parameter.validate_scalar(dtype)
 
     @staticmethod
-    def split_array_type(array_type: str) -> tuple[int, str]:
+    def split_array_type(array_type: str) -> tuple[str, tuple[str, ...]]:
         match = re.match(r"^array\[(.*?)\]$", array_type)
         if match:
-            rank, dtype = match.group(1).split(",")
-            return int(rank), dtype.strip()
+            parts = match.group(1).split(",")
+
+            dtype = parts[0].strip()
+            try:
+                dims = tuple(part.strip() for part in parts[1:])
+            except IndexError:
+                dims = ()
+            return dtype, dims
         else:
             raise ValueError(f"type not understood ({array_type})")
 
@@ -230,10 +243,13 @@ class SidlMapper(LanguageMapper):
     @staticmethod
     def map_type(dtype: str) -> str:
         if dtype.startswith("array"):
-            rank, dtype = Parameter.split_array_type(dtype)
+            dtype, dims = Parameter.split_array_type(dtype)
             if dtype == "any":
                 dtype = ""
-            return f"array<{dtype.strip()}, {rank}>"
+            if dims:
+                return f"array<{dtype.strip()}, {len(dims)}>"
+            else:
+                return f"array<{dtype.strip()},>"
         else:
             return dtype
 
@@ -260,7 +276,7 @@ class CMapper(LanguageMapper):
     @staticmethod
     def map_type(dtype: str) -> str:
         if dtype.startswith("array"):
-            _, array_type = Parameter.split_array_type(dtype)
+            array_type, _ = Parameter.split_array_type(dtype)
             if array_type == "any":
                 c_type = "void"
             else:
@@ -282,6 +298,10 @@ class CMapper(LanguageMapper):
             if intent == "in" or dtype == "string":
                 c_type = f"const {c_type}"
             c_params.append(f"{c_type} {name}")
+
+            if dtype.startswith("array"):
+                _, dims = Parameter.split_array_type(dtype)
+                c_params += [f"const int {dim}" for dim in dims]
 
         return ", ".join(c_params)
 
@@ -306,7 +326,7 @@ class CxxMapper(LanguageMapper):
     @staticmethod
     def map_type(dtype: str) -> str:
         if dtype.startswith("array"):
-            _, array_type = Parameter.split_array_type(dtype)
+            array_type, _ = Parameter.split_array_type(dtype)
             if array_type == "any":
                 cxx_type = "void"
             elif array_type == "string":
@@ -365,7 +385,7 @@ class PythonMapper(LanguageMapper):
     @staticmethod
     def map_type(dtype: str) -> str:
         if dtype.startswith("array"):
-            _, array_type = Parameter.split_array_type(dtype)
+            array_type, _ = Parameter.split_array_type(dtype)
             if array_type == "any":
                 py_type = "Any"
             elif array_type == "string":
