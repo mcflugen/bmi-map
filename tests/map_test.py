@@ -46,7 +46,7 @@ def test_c_two_parameter(a_intent, b_intent, expected):
     ],
 )
 def test_c_array_intent(intent, expected):
-    p = {"name": "a", "type": "array[1, int]", "intent": intent}
+    p = {"name": "a", "type": "array[int]", "intent": intent}
     mapped_func = bmi_map({"foo": {"params": [p]}}, to="c")
     assert mapped_func[0] == expected
 
