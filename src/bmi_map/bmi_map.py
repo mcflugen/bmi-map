@@ -71,7 +71,7 @@ def bmi_map(
 
     Examples
     --------
-    >>> from bmi_map import bmi_map
+    >>> from bmi_map.bmi_map import bmi_map
     >>> funcs = {
     ...     "get_component_name": {
     ...         "params": [dict(name="name", intent="in", type="string")]
