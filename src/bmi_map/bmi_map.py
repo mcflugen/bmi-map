@@ -20,9 +20,6 @@ except ImportError:
     with_pygments = False
 
 
-__version__ = "0.1.0"
-
-
 def main(argv: Sequence[str] | None = None) -> int:
     argv = argv if argv is not None else sys.argv[1:]
 
