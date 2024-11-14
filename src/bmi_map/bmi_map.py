@@ -5,6 +5,7 @@ from collections.abc import Sequence
 from typing import Any
 from typing import BinaryIO
 
+from bmi_map._mapper import LanguageMapper
 from bmi_map._parameter import Parameter
 
 
@@ -48,23 +49,6 @@ def bmi_map(
 
 def _load_interface_definition(file: BinaryIO) -> dict[str, dict[str, Any]]:
     return tomllib.load(file)["bmi"]
-
-
-class LanguageMapper:
-    def __init__(self, name: str, params: Sequence[dict[str, str]] | None = None):
-        params = () if params is None else params
-
-        if not name.isidentifier():
-            raise ValueError("bad name ({name})")
-
-        self._name = name
-        self._params = tuple(Parameter(**param)._astuple() for param in params)
-
-    def __str__(self) -> str:
-        return self.map()
-
-    def map(self) -> str:
-        raise NotImplementedError("map")
 
 
 class SidlMapper(LanguageMapper):
