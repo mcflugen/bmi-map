@@ -46,7 +46,7 @@ dev = ["nox"]
 testing = ["pytest"]
 
 [project.scripts]
-bmi-map = "bmi_map:main"
+bmi-map = "bmi_map._main:main"
 
 [tool.coverage.run]
 relative_files = true
