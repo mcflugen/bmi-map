@@ -42,11 +42,11 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     funcs = _filter_keys(load(sys.stdin.buffer), include=args.include)
 
-    mapped_funcs = bmi_map(funcs, to=args.to)
+    mapped_funcs = (bmi_map(func, params, to=args.to) for func, params in funcs.items())
 
     if color == "always" or (color == "auto" and sys.stdout.isatty()):
         highlight = Highlighter(args.to)
-        mapped_funcs = [highlight(mapped_func) for mapped_func in mapped_funcs]
+        mapped_funcs = (highlight(mapped_func) for mapped_func in mapped_funcs)
 
     print("\n".join(mapped_funcs))
 
