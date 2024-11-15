@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import tomllib
 from collections.abc import Sequence
-from typing import Any
 from typing import BinaryIO
 
+from bmi_map._parameter import Parameter
 from bmi_map.mappers.c import CMapper
 from bmi_map.mappers.cxx import CxxMapper
 from bmi_map.mappers.python import PythonMapper
@@ -49,5 +49,9 @@ def bmi_map(
     ]
 
 
-def _load_interface_definition(file: BinaryIO) -> dict[str, dict[str, Any]]:
-    return tomllib.load(file)["bmi"]
+def load(stream: BinaryIO) -> dict[str, tuple[Parameter, ...]]:
+    funcs = tomllib.load(stream)["bmi"]
+    return {
+        name: tuple(Parameter(**param) for param in signature["params"])
+        for name, signature in funcs.items()
+    }
