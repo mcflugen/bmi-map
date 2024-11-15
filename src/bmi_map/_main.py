@@ -1,12 +1,12 @@
 import argparse
 import re
 import sys
-import tomllib
 from collections.abc import Sequence
 from functools import partial
 from typing import Any
 
 from bmi_map.bmi_map import bmi_map
+from bmi_map.bmi_map import load
 
 try:
     import pygments
@@ -40,7 +40,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     color = args.color if with_pygments else "never"
 
-    funcs = _filter_keys(tomllib.load(sys.stdin.buffer)["bmi"], include=args.include)
+    funcs = _filter_keys(load(sys.stdin.buffer), include=args.include)
 
     mapped_funcs = bmi_map(funcs, to=args.to)
 
