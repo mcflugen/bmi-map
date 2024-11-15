@@ -11,8 +11,8 @@ class CMapper(LanguageMapper):
         "string": "char*",
     }
 
-    def map(self) -> str:
-        return f"int {self._name}({self.map_params(self._params)});"
+    def map(self, name: str, params: Sequence[Parameter]) -> str:
+        return f"int {name}({self.map_params(params)});"
 
     @staticmethod
     def map_type(dtype: str) -> str:
@@ -30,18 +30,20 @@ class CMapper(LanguageMapper):
         return c_type
 
     @staticmethod
-    def map_params(params: Sequence[tuple[str, str, str]]) -> str:
-        c_params = ["void* self"]
-        for name, intent, dtype in params:
-            c_type = CMapper.map_type(dtype)
-            if intent.endswith("out") and dtype != "string":
-                c_type = f"{c_type}*"
-            if intent == "in" or dtype == "string":
-                c_type = f"const {c_type}"
-            c_params.append(f"{c_type} {name}")
+    def map_param(param: Parameter) -> str:
+        c_type = CMapper.map_type(param.type)
+        if param.intent.endswith("out") and param.type != "string":
+            c_type = f"{c_type}*"
+        if param.intent == "in" or param.type == "string":
+            c_type = f"const {c_type}"
+        c_param = f"{c_type} {param.name}"
 
-            if dtype.startswith("array"):
-                _, dims = Parameter.split_array_type(dtype)
-                c_params += [f"const int {dim}" for dim in dims]
+        if param.type.startswith("array"):
+            _, dims = Parameter.split_array_type(param.type)
+            c_param = ", ".join([c_param] + [f"const int {dim}" for dim in dims])
 
-        return ", ".join(c_params)
+        return c_param
+
+    @staticmethod
+    def map_params(params: Sequence[Parameter]) -> str:
+        return ", ".join(["void* self"] + [CMapper.map_param(p) for p in params])
