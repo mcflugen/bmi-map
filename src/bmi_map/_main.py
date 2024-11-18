@@ -5,6 +5,7 @@ from collections.abc import Sequence
 from functools import partial
 from typing import Any
 
+from bmi_map._bmi import BMI
 from bmi_map.bmi_map import bmi_map
 from bmi_map.bmi_map import load
 
@@ -23,6 +24,12 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
+        "--spec",
+        type=argparse.FileType("rb"),
+        help="spec file from which to read function specifications",
+        default=None,
+    )
+    parser.add_argument(
         "--to",
         help="language for which to generate mappings",
         choices=("c", "c++", "fortran", "python", "sidl"),
@@ -40,7 +47,9 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     color = args.color if with_pygments else "never"
 
-    funcs = _filter_keys(load(sys.stdin.buffer), include=args.include)
+    spec = BMI if args.spec is None else load(args.spec)
+
+    funcs = _filter_keys(spec, include=args.include)
 
     mapped_funcs = (bmi_map(func, params, to=args.to) for func, params in funcs.items())
 
