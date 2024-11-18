@@ -1,4 +1,5 @@
 import pytest
+from bmi_map._parameter import Parameter
 from bmi_map.bmi_map import bmi_map
 
 
@@ -11,9 +12,9 @@ from bmi_map.bmi_map import bmi_map
     ],
 )
 def test_c_one_parameter(intent, expected):
-    params = [{"name": "a", "type": "int", "intent": intent}]
-    mapped_func = bmi_map({"foo": {"params": params}}, to="c")
-    assert mapped_func[0] == expected
+    params = [Parameter(name="a", type="int", intent=intent)]
+    mapped_func = bmi_map("foo", params, to="c")
+    assert mapped_func == expected
 
 
 @pytest.mark.parametrize(
@@ -29,11 +30,11 @@ def test_c_one_parameter(intent, expected):
 )
 def test_c_two_parameter(a_intent, b_intent, expected):
     params = [
-        {"name": "a", "type": "int", "intent": a_intent},
-        {"name": "b", "type": "int", "intent": b_intent},
+        Parameter(name="a", type="int", intent=a_intent),
+        Parameter(name="b", type="int", intent=b_intent),
     ]
-    mapped_func = bmi_map({"foo": {"params": params}}, to="c")
-    assert mapped_func[0] == expected
+    mapped_func = bmi_map("foo", params, to="c")
+    assert mapped_func == expected
 
 
 @pytest.mark.parametrize(
@@ -45,9 +46,9 @@ def test_c_two_parameter(a_intent, b_intent, expected):
     ],
 )
 def test_c_array_intent(intent, expected):
-    p = {"name": "a", "type": "array[int]", "intent": intent}
-    mapped_func = bmi_map({"foo": {"params": [p]}}, to="c")
-    assert mapped_func[0] == expected
+    params = [Parameter(name="a", type="array[int]", intent=intent)]
+    mapped_func = bmi_map("foo", params, to="c")
+    assert mapped_func == expected
 
 
 @pytest.mark.parametrize(
@@ -62,11 +63,11 @@ def test_c_array_intent(intent, expected):
 )
 def test_c_array_with_dimensions(dims, expected):
     params = [
-        {"name": "a", "type": f"array[int,{dims}]", "intent": "in"},
-        {"name": "b", "type": "array[int]", "intent": "in"},
+        Parameter(name="a", intent="in", type=f"array[int,{dims}]"),
+        Parameter(name="b", intent="in", type="array[int]"),
     ]
-    mapped_func = bmi_map({"f": {"params": params}}, to="c")
-    assert mapped_func[0] == expected
+    mapped_func = bmi_map("f", params, to="c")
+    assert mapped_func == expected
 
 
 @pytest.mark.parametrize(
@@ -78,9 +79,9 @@ def test_c_array_with_dimensions(dims, expected):
     ],
 )
 def test_cxx_one_parameter(intent, expected):
-    params = [{"name": "a", "type": "int", "intent": intent}]
-    mapped_func = bmi_map({"foo": {"params": params}}, to="c++")
-    assert mapped_func[0] == expected
+    params = [Parameter(name="a", type="int", intent=intent)]
+    mapped_func = bmi_map("foo", params, to="c++")
+    assert mapped_func == expected
 
 
 @pytest.mark.parametrize(
@@ -95,8 +96,8 @@ def test_cxx_one_parameter(intent, expected):
 )
 def test_cxx_two_parameter(a_intent, b_intent, expected):
     params = [
-        {"name": "a", "type": "int", "intent": a_intent},
-        {"name": "b", "type": "int", "intent": b_intent},
+        Parameter(name="a", type="int", intent=a_intent),
+        Parameter(name="b", type="int", intent=b_intent),
     ]
-    mapped_func = bmi_map({"foo": {"params": params}}, to="c++")
-    assert mapped_func[0] == expected
+    mapped_func = bmi_map("foo", params, to="c++")
+    assert mapped_func == expected
