@@ -66,7 +66,6 @@ addopts = [
   "--tb=native",
   "--strict",
   "--durations=16",
-  "--doctest-modules",
   "-vvv",
 ]
 doctest_optionflags = [
