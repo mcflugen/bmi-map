@@ -29,21 +29,6 @@ class Parameter:
     def isscalar(self):
         return not self._type.startswith("array")
 
-    @staticmethod
-    def split_array_type(array_type: str) -> tuple[str, tuple[str, ...]]:
-        match = re.match(r"^array\[(.*?)\]$", array_type)
-        if match:
-            parts = match.group(1).split(",")
-
-            dtype = parts[0].strip()
-            try:
-                dims = tuple(part.strip() for part in parts[1:])
-            except IndexError:
-                dims = ()
-            return dtype, dims
-        else:
-            raise ValueError(f"type not understood ({array_type})")
-
 
 def validate_name(name: str) -> str:
     name = name.strip()
@@ -75,7 +60,7 @@ def validate_array(dtype: str) -> str:
     if not dtype.startswith("array"):
         raise ValueError("not an array type ({dtype})")
 
-    dtype, dims = Parameter.split_array_type(dtype)
+    dtype, dims = split_array_type(dtype)
     if dtype not in VALID_ARRAY_TYPES:
         raise ValueError(
             f"array type not understood ({dtype} not one of"
@@ -96,3 +81,18 @@ def validate_type(dtype: str) -> str:
         return validate_array(dtype)
     else:
         return validate_scalar(dtype)
+
+
+def split_array_type(array_type: str) -> tuple[str, tuple[str, ...]]:
+    match = re.match(r"^array\[(.*?)\]$", array_type)
+    if match:
+        parts = match.group(1).split(",")
+
+        dtype = parts[0].strip()
+        try:
+            dims = tuple(part.strip() for part in parts[1:])
+        except IndexError:
+            dims = ()
+        return dtype, dims
+    else:
+        raise ValueError(f"type not understood ({array_type})")
