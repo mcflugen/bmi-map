@@ -2,6 +2,7 @@ from collections.abc import Sequence
 
 from bmi_map._mapper import LanguageMapper
 from bmi_map._parameter import Parameter
+from bmi_map._parameter import split_array_type
 
 
 class SidlMapper(LanguageMapper):
@@ -11,7 +12,7 @@ class SidlMapper(LanguageMapper):
     @staticmethod
     def map_type(dtype: str) -> str:
         if dtype.startswith("array"):
-            dtype, dims = Parameter.split_array_type(dtype)
+            dtype, dims = split_array_type(dtype)
             if dtype == "any":
                 dtype = ""
             if dims:

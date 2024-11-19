@@ -2,6 +2,7 @@ from collections.abc import Sequence
 
 from bmi_map._mapper import LanguageMapper
 from bmi_map._parameter import Parameter
+from bmi_map._parameter import split_array_type
 
 
 class CMapper(LanguageMapper):
@@ -17,7 +18,7 @@ class CMapper(LanguageMapper):
     @staticmethod
     def map_type(dtype: str) -> str:
         if dtype.startswith("array"):
-            array_type, _ = Parameter.split_array_type(dtype)
+            array_type, _ = split_array_type(dtype)
             if array_type == "any":
                 c_type = "void"
             else:
@@ -39,7 +40,7 @@ class CMapper(LanguageMapper):
         c_param = f"{c_type} {param.name}"
 
         if param.type.startswith("array"):
-            _, dims = Parameter.split_array_type(param.type)
+            _, dims = split_array_type(param.type)
             c_param = ", ".join([c_param] + [f"const int {dim}" for dim in dims])
 
         return c_param
