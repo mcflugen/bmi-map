@@ -51,22 +51,21 @@ bmi-map = "bmi_map:main"
 [tool.coverage.run]
 relative_files = true
 
-[tool.setuptools]
-py-modules = ["bmi_map"]
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [tool.setuptools.dynamic]
 readme = {file = ["README.md", "AUTHORS.md", "CHANGES.md"], content-type="text/markdown"}
-version = {attr = "bmi_map.__version__"}
+version = {attr = "bmi_map._version.__version__"}
 
 [tool.pytest.ini_options]
 minversion = "6.0"
-testpaths = ["tests", "bmi_map.py"]
+testpaths = ["tests", "src/bmi_map"]
 norecursedirs = [".*", "*.egg*", "build", "dist"]
 addopts = [
   "--tb=native",
   "--strict",
   "--durations=16",
-  "--doctest-modules",
   "-vvv",
 ]
 doctest_optionflags = [

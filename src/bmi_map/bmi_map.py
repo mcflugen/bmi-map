@@ -20,9 +20,6 @@ except ImportError:
     with_pygments = False
 
 
-__version__ = "0.1.0"
-
-
 def main(argv: Sequence[str] | None = None) -> int:
     argv = argv if argv is not None else sys.argv[1:]
 
@@ -74,7 +71,7 @@ def bmi_map(
 
     Examples
     --------
-    >>> from bmi_map import bmi_map
+    >>> from bmi_map.bmi_map import bmi_map
     >>> funcs = {
     ...     "get_component_name": {
     ...         "params": [dict(name="name", intent="in", type="string")]

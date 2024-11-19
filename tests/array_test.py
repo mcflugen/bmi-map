@@ -1,6 +1,5 @@
 import pytest
-
-from bmi_map import Parameter
+from bmi_map.bmi_map import Parameter
 
 
 @pytest.mark.parametrize("array_type", ("int", "double", "string", "any"))

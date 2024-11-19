@@ -1,6 +1,5 @@
 import pytest
-
-from bmi_map import bmi_map
+from bmi_map.bmi_map import bmi_map
 
 
 @pytest.mark.parametrize(
