@@ -1,31 +1,29 @@
 import re
 from collections import Counter
+from dataclasses import asdict
+from dataclasses import astuple
+from dataclasses import dataclass
 
-
+@dataclass
 class Parameter:
+    name: str
+    intent: str
+    type: str
+
     valid_intents = frozenset(("in", "inout", "out"))
     valid_scalar_types = frozenset(("int", "double", "string"))
     valid_array_types = frozenset(("any", "int", "double", "string"))
 
-    def __init__(self, name: str, intent: str, type: str):
-        self._name = self.validate_name(name)
-        self._intent = self.validate_intent(intent)
-        self._type = self.validate_type(type)
+    def __post_init__(self):
+        self.name = self.validate_name(self.name)
+        self.intent = self.validate_intent(self.intent)
+        self.type = self.validate_type(self.type)
 
-    def _astuple(self) -> tuple[str, str, str]:
-        return (self.name, self.intent, self.type)
+    def asdict(self):
+        return asdict(self)
 
-    @property
-    def name(self) -> str:
-        return self._name
-
-    @property
-    def intent(self) -> str:
-        return self._intent
-
-    @property
-    def type(self) -> str:
-        return self._type
+    def astuple(self):
+        return astuple(self)
 
     def isscalar(self):
         return not self._type.startswith("array")
