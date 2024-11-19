@@ -1,5 +1,5 @@
 import pytest
-from bmi_map.bmi_map import main
+from bmi_map._main import main
 
 
 def test_help():
