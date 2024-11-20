@@ -56,3 +56,29 @@ def lint(session: nox.Session) -> None:
     """Look for lint."""
     session.install("pre-commit")
     session.run("pre-commit", "run", "--all-files")
+
+
+@nox.session(name="gen-toml")
+def gen_toml(session: nox.Session) -> None:
+    """Generate a toml description of the BMI."""
+    session.install(".", "tomli_w")
+
+    script = """\
+import tomli_w
+from bmi_map._bmi import BMI
+
+bmi_toml = tomli_w.dumps(
+    {
+        "bmi": {
+            name: {
+                "params": [p.asdict() for p in params]
+            }
+            for name, params in sorted(BMI.items())
+        }
+    }
+)
+
+print(bmi_toml)
+"""
+    contents = session.run("python", "-c", script, silent=True, external=True)
+    print(contents.strip())
