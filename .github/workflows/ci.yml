@@ -83,6 +83,32 @@ jobs:
           pip install nox
           nox --non-interactive --error-on-missing-interpreter -s test -- dist/*whl
 
+  coverage:
+    needs: build-sdist
+    runs-on: ${{ matrix.os }}
+
+    defaults:
+      run:
+        shell: bash -l {0}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        python-version: ["3.11", "3.12", "3.13"]
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Test
+        run: |
+          pip install nox
+          nox --non-interactive --error-on-missing-interpreter -s test
+
       - name: Coveralls
         if: matrix.os == 'ubuntu-latest'
         uses: AndreMiras/coveralls-python-action@develop
@@ -93,7 +119,7 @@ jobs:
           debug: true
 
   coveralls-finish:
-    needs: test
+    needs: coverage
     runs-on: ubuntu-latest
     steps:
       - name: Coveralls Finished
