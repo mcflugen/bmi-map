@@ -32,7 +32,7 @@ def install(session: nox.Session) -> None:
         else:
             session.error("path must be a source distribution or folder")
     else:
-        session.install(".")
+        session.install("-e", ".")
 
 
 @nox.session
