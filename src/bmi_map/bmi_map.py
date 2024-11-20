@@ -4,6 +4,7 @@ import tomllib
 from collections.abc import Sequence
 from typing import BinaryIO
 
+from bmi_map._bmi import BMI
 from bmi_map._parameter import Parameter
 from bmi_map.mappers.c import CMapper
 from bmi_map.mappers.cxx import CxxMapper
@@ -42,6 +43,10 @@ def bmi_map(name: str, params: Sequence[Parameter], to: str = "sidl") -> str:
     mapper = LANGUAGE_MAPPER[to]()
 
     return mapper.map(name, params)
+
+
+def map_bmi_function(name: str, to: str) -> str:
+    return bmi_map(name, BMI[name], to=to)
 
 
 def load(stream: BinaryIO) -> dict[str, tuple[Parameter, ...]]:
