@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import tomllib
 from collections.abc import Sequence
+from typing import Any
 from typing import BinaryIO
 
 from bmi_map._bmi import BMI
@@ -50,7 +51,14 @@ def map_bmi_function(name: str, to: str) -> str:
 
 
 def load(stream: BinaryIO) -> dict[str, tuple[Parameter, ...]]:
-    funcs = tomllib.load(stream)["bmi"]
+    return _spec_to_dict(tomllib.load(stream)["bmi"])
+
+
+def loads(s: str) -> dict[str, tuple[Parameter, ...]]:
+    return _spec_to_dict(tomllib.loads(s)["bmi"])
+
+
+def _spec_to_dict(funcs: dict[str, dict[str, Any]]) -> dict[str, tuple[Parameter, ...]]:
     return {
         name: tuple(Parameter(**param) for param in signature["params"])
         for name, signature in funcs.items()
