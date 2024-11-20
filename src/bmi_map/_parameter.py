@@ -9,16 +9,16 @@ VALID_SCALAR_TYPES = frozenset(("int", "double", "string"))
 VALID_ARRAY_TYPES = frozenset(("any", "int", "double", "string"))
 
 
-@dataclass
+@dataclass(frozen=True)
 class Parameter:
     name: str
     intent: str
     type: str
 
     def __post_init__(self):
-        self.name = validate_name(self.name)
-        self.intent = validate_intent(self.intent)
-        self.type = validate_type(self.type)
+        object.__setattr__(self, "name", validate_name(self.name))
+        object.__setattr__(self, "intent", validate_intent(self.intent))
+        object.__setattr__(self, "type", validate_type(self.type))
 
     def asdict(self):
         return asdict(self)
