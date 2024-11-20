@@ -2,6 +2,7 @@ from collections.abc import Sequence
 
 from bmi_map._mapper import LanguageMapper
 from bmi_map._parameter import Parameter
+from bmi_map._parameter import split_array_type
 
 
 class PythonMapper(LanguageMapper):
@@ -20,7 +21,7 @@ class PythonMapper(LanguageMapper):
     @staticmethod
     def map_type(dtype: str) -> str:
         if dtype.startswith("array"):
-            array_type, _ = Parameter.split_array_type(dtype)
+            array_type, _ = split_array_type(dtype)
             if array_type == "any":
                 py_type = "Any"
             elif array_type == "string":
