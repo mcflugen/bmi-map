@@ -11,15 +11,9 @@ class CxxMapper(LanguageMapper):
         "string": "std::string",
     }
 
-    def __init__(self, name: str, params: Sequence[dict[str, str]] | None = None):
+    def map(self, name: str, params: Sequence[Parameter]) -> str:
         name = "".join(part.title() for part in name.split("_"))
-        super().__init__(name, params)
-
-    def map(self) -> str:
-        return (
-            f"{self.map_returns(self._params)}"
-            f" {self._name}({self.map_params(self._params)});"
-        )
+        return f"{self.map_returns(params)} {name}({self.map_params(params)});"
 
     @staticmethod
     def map_type(dtype: str) -> str:
@@ -40,24 +34,26 @@ class CxxMapper(LanguageMapper):
         return cxx_type
 
     @staticmethod
-    def map_params(params: Sequence[tuple[str, str, str]]) -> str:
-        cxx_params = []
-        for name, intent, dtype in params:
-            cxx_type = CxxMapper.map_type(dtype)
-            if dtype != "string":
-                if intent == "in":
-                    cxx_type = f"const {cxx_type}"
-                elif intent.endswith("out"):
-                    cxx_type = f"{cxx_type}*"
-            if intent.startswith("in"):
-                cxx_params.append(f"{cxx_type} {name}")
-        return ", ".join(cxx_params)
+    def map_param(param: Parameter) -> str:
+        cxx_type = CxxMapper.map_type(param.type)
+        if param.type != "string":
+            if param.intent == "in":
+                cxx_type = f"const {cxx_type}"
+            elif param.intent.endswith("out"):
+                cxx_type = f"{cxx_type}*"
+        return f"{cxx_type} {param.name}"
 
     @staticmethod
-    def map_returns(params: Sequence[tuple[str, str, str]]):
-        returns = [
-            CxxMapper.map_type(dtype) for _, intent, dtype in params if intent == "out"
-        ]
+    def map_params(params: Sequence[Parameter]) -> str:
+        return ", ".join(
+            CxxMapper.map_param(param)
+            for param in params
+            if param.intent.startswith("in")
+        )
+
+    @staticmethod
+    def map_returns(params: Sequence[Parameter]) -> str:
+        returns = [CxxMapper.map_type(p.type) for p in params if p.intent == "out"]
 
         if len(returns) == 0:
             return "void"

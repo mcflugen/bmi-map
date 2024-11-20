@@ -11,9 +11,7 @@ from bmi_map.mappers.python import PythonMapper
 from bmi_map.mappers.sidl import SidlMapper
 
 
-def bmi_map(
-    funcs: dict[str, dict[str, Sequence[dict[str, str]]]], to="sidl"
-) -> list[str]:
+def bmi_map(name: str, params: Sequence[Parameter], to: str = "sidl") -> str:
     """Map a BMI to a given language.
 
     Parameters
@@ -41,12 +39,9 @@ def bmi_map(
         "sidl": SidlMapper,
     }
 
-    mapper = LANGUAGE_MAPPER[to]
+    mapper = LANGUAGE_MAPPER[to]()
 
-    return [
-        mapper(name, params=func["params"]).map()
-        for name, func in sorted(funcs.items())
-    ]
+    return mapper.map(name, params)
 
 
 def load(stream: BinaryIO) -> dict[str, tuple[Parameter, ...]]:

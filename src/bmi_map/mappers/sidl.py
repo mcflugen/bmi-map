@@ -5,8 +5,8 @@ from bmi_map._parameter import Parameter
 
 
 class SidlMapper(LanguageMapper):
-    def map(self) -> str:
-        return f"int {self._name}({SidlMapper.map_params(self._params)});"
+    def map(self, name: str, params: Sequence[Parameter]) -> str:
+        return f"int {name}({SidlMapper.map_params(params)});"
 
     @staticmethod
     def map_type(dtype: str) -> str:
@@ -22,10 +22,9 @@ class SidlMapper(LanguageMapper):
             return dtype
 
     @staticmethod
-    def map_params(params: Sequence[tuple[str, str, str]]) -> str:
-        return ", ".join(
-            [
-                f"{name} {intent} {SidlMapper.map_type(dtype)}"
-                for name, intent, dtype in params
-            ]
-        )
+    def map_param(param: Parameter) -> str:
+        return f"{param.name} {param.intent} {SidlMapper.map_type(param.type)}"
+
+    @staticmethod
+    def map_params(params: Sequence[Parameter]) -> str:
+        return ", ".join(SidlMapper.map_param(p) for p in params)

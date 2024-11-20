@@ -11,10 +11,10 @@ class PythonMapper(LanguageMapper):
         "string": "str",
     }
 
-    def map(self):
+    def map(self, name: str, params: Sequence[Parameter]) -> str:
         return (
-            f"def {self._name}({PythonMapper.map_params(self._params)})"
-            f" -> {PythonMapper.map_returns(self._params)}:"
+            f"def {name}({PythonMapper.map_params(params)})"
+            f" -> {PythonMapper.map_returns(params)}:"
         )
 
     @staticmethod
@@ -35,20 +35,20 @@ class PythonMapper(LanguageMapper):
         return py_type
 
     @staticmethod
-    def map_params(params: Sequence[tuple[str, str, str]]) -> str:
-        py_params = ["self"] + [
-            f"{name}: {PythonMapper.map_type(dtype)}"
-            for name, intent, dtype in params
-            if intent.startswith("in")
-        ]
-        return ", ".join(py_params)
+    def map_param(param: Parameter) -> str:
+        return f"{param.name}: {PythonMapper.map_type(param.type)}"
 
     @staticmethod
-    def map_returns(params: Sequence[tuple[str, str, str]]):
+    def map_params(params: Sequence[Parameter]) -> str:
+        return ", ".join(
+            ["self"]
+            + [PythonMapper.map_param(p) for p in params if p.intent.startswith("in")]
+        )
+
+    @staticmethod
+    def map_returns(params: Sequence[Parameter]) -> str:
         returns = [
-            PythonMapper.map_type(dtype)
-            for _, intent, dtype in params
-            if intent.endswith("out")
+            PythonMapper.map_type(p.type) for p in params if p.intent.endswith("out")
         ]
         if len(returns) == 0:
             return "None"
