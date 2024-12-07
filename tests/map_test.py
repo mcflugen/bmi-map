@@ -101,3 +101,20 @@ def test_cxx_two_parameter(a_intent, b_intent, expected):
     ]
     mapped_func = bmi_map("foo", params, to="c++")
     assert mapped_func == expected
+
+
+@pytest.mark.parametrize("expected", [("function foo(this, a) result(bmi_status)")])
+def test_fortran_one_parameter(expected):
+    params = [Parameter(name="a", type="int", intent="in")]
+    mapped_func = bmi_map("foo", params, to="fortran")
+    assert mapped_func == expected
+
+
+@pytest.mark.parametrize("expected", [("function foo(this, a, b) result(bmi_status)")])
+def test_fortran_two_parameter(expected):
+    params = [
+        Parameter(name="a", type="int", intent="in"),
+        Parameter(name="b", type="int", intent="in"),
+    ]
+    mapped_func = bmi_map("foo", params, to="fortran")
+    assert mapped_func == expected
