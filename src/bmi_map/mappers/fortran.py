@@ -12,9 +12,7 @@ class FortranMapper(LanguageMapper):
     }
 
     def map(self, name: str, params: Sequence[Parameter]) -> str:
-        return (
-            f"function {name}({self.map_params(params)}) result(bmi_status)"
-        )
+        return f"function {name}({self.map_params(params)}) result(bmi_status)"
 
     @staticmethod
     def map_params(params: Sequence[Parameter]) -> str:
