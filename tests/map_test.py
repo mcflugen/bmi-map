@@ -6,6 +6,20 @@ from bmi_map.bmi_map import bmi_map
 @pytest.mark.parametrize(
     "intent,expected",
     [
+        ("in", "int foo(in int a);"),
+        ("inout", "int foo(inout int a);"),
+        ("out", "int foo(out int a);"),
+    ],
+)
+def test_sidl_one_parameter(intent, expected):
+    params = [Parameter(name="a", type="int", intent=intent)]
+    mapped_func = bmi_map("foo", params, to="sidl")
+    assert mapped_func == expected
+
+
+@pytest.mark.parametrize(
+    "intent,expected",
+    [
         ("in", "int foo(void* self, const int a);"),
         ("inout", "int foo(void* self, int* a);"),
         ("out", "int foo(void* self, int* a);"),
