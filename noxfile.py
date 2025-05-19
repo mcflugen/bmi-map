@@ -41,14 +41,16 @@ def test(session: nox.Session) -> None:
     session.install("-r", "requirements-testing.in")
     install(session)
 
-    args = ["--cov", "bmi_map", "-vvv"]
-
-    if "CI" in os.environ:
-        args.append(f"--cov-report=xml:{ROOT}/coverage.xml")
-    session.run("pytest", *args)
-
-    if "CI" not in os.environ:
-        session.run("coverage", "report", "--ignore-errors", "--show-missing")
+    session.run(
+        "coverage",
+        "run",
+        "--branch",
+        "--source=bmi_map,tests",
+        "--module",
+        "pytest",
+    )
+    session.run("coverage", "report", "--ignore-errors", "--show-missing")
+    session.run("coverage", "xml", "-o", "coverage.xml")
 
 
 @nox.session
