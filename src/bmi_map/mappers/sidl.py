@@ -24,7 +24,7 @@ class SidlMapper(LanguageMapper):
 
     @staticmethod
     def map_param(param: Parameter) -> str:
-        return f"{param.name} {param.intent} {SidlMapper.map_type(param.type)}"
+        return f"{param.intent} {SidlMapper.map_type(param.type)} {param.name}"
 
     @staticmethod
     def map_params(params: Sequence[Parameter]) -> str:
