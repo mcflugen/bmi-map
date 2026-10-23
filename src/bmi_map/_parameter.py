@@ -27,7 +27,7 @@ class Parameter:
         return astuple(self)
 
     def isscalar(self):
-        return not self._type.startswith("array")
+        return not self.type.startswith("array")
 
 
 def validate_name(name: str) -> str:
