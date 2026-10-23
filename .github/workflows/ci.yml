@@ -85,7 +85,7 @@ jobs:
       - name: Test
         run: |
           pip install nox
-          nox --non-interactive --error-on-missing-interpreter -s test -- dist/*whl
+          nox -s test -- dist/*whl
 
   coverage:
     needs: build-sdist
@@ -111,7 +111,7 @@ jobs:
       - name: Test
         run: |
           pip install nox
-          nox --non-interactive --error-on-missing-interpreter -s test
+          nox -s test
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
