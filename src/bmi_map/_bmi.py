@@ -12,7 +12,7 @@ BMI = {
     ),
     "get_grid_edge_nodes": (
         Parameter(name="grid", intent="in", type="int"),
-        Parameter(name="edge_nodes", intent="in", type="array[int]"),
+        Parameter(name="edge_nodes", intent="inout", type="array[int]"),
     ),
     "get_grid_face_count": (
         Parameter(name="grid", intent="in", type="int"),
@@ -20,11 +20,11 @@ BMI = {
     ),
     "get_grid_face_edges": (
         Parameter(name="grid", intent="in", type="int"),
-        Parameter(name="face_edges", intent="in", type="array[int]"),
+        Parameter(name="face_edges", intent="inout", type="array[int]"),
     ),
     "get_grid_face_nodes": (
         Parameter(name="grid", intent="in", type="int"),
-        Parameter(name="face_nodes", intent="in", type="array[int]"),
+        Parameter(name="face_nodes", intent="inout", type="array[int]"),
     ),
     "get_grid_node_count": (
         Parameter(name="grid", intent="in", type="int"),
@@ -32,11 +32,11 @@ BMI = {
     ),
     "get_grid_nodes_per_face": (
         Parameter(name="grid", intent="in", type="int"),
-        Parameter(name="nodes_per_face", intent="in", type="array[int]"),
+        Parameter(name="nodes_per_face", intent="inout", type="array[int]"),
     ),
     "get_grid_origin": (
         Parameter(name="grid", intent="in", type="int"),
-        Parameter(name="origin", intent="in", type="array[double]"),
+        Parameter(name="origin", intent="inout", type="array[double]"),
     ),
     "get_grid_rank": (
         Parameter(name="grid", intent="in", type="int"),
@@ -44,7 +44,7 @@ BMI = {
     ),
     "get_grid_shape": (
         Parameter(name="grid", intent="in", type="int"),
-        Parameter(name="shape", intent="in", type="array[int]"),
+        Parameter(name="shape", intent="inout", type="array[int]"),
     ),
     "get_grid_size": (
         Parameter(name="grid", intent="in", type="int"),
@@ -52,7 +52,7 @@ BMI = {
     ),
     "get_grid_spacing": (
         Parameter(name="grid", intent="in", type="int"),
-        Parameter(name="spacing", intent="in", type="array[double]"),
+        Parameter(name="spacing", intent="inout", type="array[double]"),
     ),
     "get_grid_type": (
         Parameter(name="grid", intent="in", type="int"),
@@ -60,15 +60,15 @@ BMI = {
     ),
     "get_grid_x": (
         Parameter(name="grid", intent="in", type="int"),
-        Parameter(name="x", intent="in", type="array[double]"),
+        Parameter(name="x", intent="inout", type="array[double]"),
     ),
     "get_grid_y": (
         Parameter(name="grid", intent="in", type="int"),
-        Parameter(name="y", intent="in", type="array[double]"),
+        Parameter(name="y", intent="inout", type="array[double]"),
     ),
     "get_grid_z": (
         Parameter(name="grid", intent="in", type="int"),
-        Parameter(name="z", intent="in", type="array[double]"),
+        Parameter(name="z", intent="inout", type="array[double]"),
     ),
     "get_input_item_count": (Parameter(name="count", intent="out", type="int"),),
     "get_input_var_names": (
@@ -83,11 +83,11 @@ BMI = {
     "get_time_units": (Parameter(name="units", intent="out", type="string"),),
     "get_value": (
         Parameter(name="name", intent="in", type="string"),
-        Parameter(name="dest", intent="in", type="array[any]"),
+        Parameter(name="dest", intent="inout", type="array[any]"),
     ),
     "get_value_at_indices": (
         Parameter(name="name", intent="in", type="string"),
-        Parameter(name="dest", intent="in", type="array[int]"),
+        Parameter(name="dest", intent="inout", type="array[any]"),
         Parameter(name="inds", intent="in", type="array[int, count]"),
     ),
     "get_value_ptr": (
