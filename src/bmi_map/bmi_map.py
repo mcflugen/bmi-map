@@ -9,6 +9,7 @@ from bmi_map._bmi import BMI
 from bmi_map._parameter import Parameter
 from bmi_map.mappers.c import CMapper
 from bmi_map.mappers.cxx import CxxMapper
+from bmi_map.mappers.fortran import FortranMapper
 from bmi_map.mappers.python import PythonMapper
 from bmi_map.mappers.sidl import SidlMapper
 
@@ -37,6 +38,7 @@ def bmi_map(name: str, params: Sequence[Parameter], to: str = "sidl") -> str:
     LANGUAGE_MAPPER = {
         "c": CMapper,
         "c++": CxxMapper,
+        "fortran": FortranMapper,
         "python": PythonMapper,
         "sidl": SidlMapper,
     }
