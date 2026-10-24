@@ -47,12 +47,24 @@ def validate_intent(intent: str) -> str:
     return intent
 
 
-def validate_scalar(dtype: str) -> str:
-    if dtype not in VALID_SCALAR_TYPES:
+def validate_one_of(
+    value: str,
+    *,
+    allowed=(),
+    name: str | None = None,
+) -> str:
+    name = "value" if name is None else name
+
+    if value not in allowed:
         raise ValueError(
-            f"type not understood ({dtype!r} not one of"
-            f" {', '.join(repr(t) for t in sorted(VALID_SCALAR_TYPES))})"
+            f"{name} must be one of [{', '.join(sorted(map(repr, allowed)))}]"
+            f" (got {value!r})"
         )
+    return value
+
+
+def validate_scalar(dtype: str) -> str:
+    validate_one_of(dtype, allowed=VALID_SCALAR_TYPES, name="dtype")
     return dtype
 
 
@@ -61,11 +73,7 @@ def validate_array(dtype: str) -> str:
         raise ValueError("not an array type ({dtype})")
 
     dtype, dims = split_array_type(dtype)
-    if dtype not in VALID_ARRAY_TYPES:
-        raise ValueError(
-            f"array type not understood ({dtype} not one of"
-            f" {', '.join(repr(t) for t in sorted(VALID_ARRAY_TYPES))})"
-        )
+
     repeated_dims = [dim for dim, count in Counter(dims).items() if count > 1]
     if repeated_dims:
         raise ValueError(
@@ -86,13 +94,17 @@ def validate_type(dtype: str) -> str:
 def split_array_type(array_type: str) -> tuple[str, tuple[str, ...]]:
     match = re.match(r"^array\[(.*?)\]$", array_type)
     if match:
-        parts = match.group(1).split(",")
+        dtype, sep, dims = match.group(1).partition(",")
 
-        dtype = parts[0].strip()
-        try:
-            dims = tuple(part.strip() for part in parts[1:])
-        except IndexError:
-            dims = ()
-        return dtype, dims
+        dtype = validate_one_of(dtype.strip(), allowed=VALID_ARRAY_TYPES, name="dtype")
+        if not sep:
+            return dtype, ()
+
+        dims = [dim.strip() for dim in dims.split(",")]
+
+        if any(len(dim) == 0 for dim in dims):
+            raise ValueError(f"unable to parse array type ({match.group(1)!r})")
+
+        return dtype, tuple(dims)
     else:
         raise ValueError(f"type not understood ({array_type})")
