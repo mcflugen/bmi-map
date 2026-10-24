@@ -40,7 +40,7 @@ class CxxMapper(LanguageMapper):
         if param.type != "string":
             if param.intent == "in":
                 cxx_type = f"const {cxx_type}"
-            elif param.intent.endswith("out"):
+            elif param.intent.endswith("out") and not param.type.startswith("array"):
                 cxx_type = f"{cxx_type}*"
         return f"{cxx_type} {param.name}"
 

@@ -24,8 +24,7 @@ class CMapper(LanguageMapper):
             else:
                 c_type = CMapper.map_type(array_type)
 
-            if array_type != "string":
-                c_type += "*"
+            c_type += "*"
         else:
             c_type = CMapper._type_mapping[dtype]
         return c_type
@@ -33,9 +32,9 @@ class CMapper(LanguageMapper):
     @staticmethod
     def map_param(param: Parameter) -> str:
         c_type = CMapper.map_type(param.type)
-        if param.intent.endswith("out") and param.type != "string":
+        if needs_pointer_indirection(param):
             c_type = f"{c_type}*"
-        if param.intent == "in" or param.type == "string":
+        if param.intent == "in":
             c_type = f"const {c_type}"
         c_param = f"{c_type} {param.name}"
 
@@ -48,3 +47,15 @@ class CMapper(LanguageMapper):
     @staticmethod
     def map_params(params: Sequence[Parameter]) -> str:
         return ", ".join(["void* self"] + [CMapper.map_param(p) for p in params])
+
+
+def needs_pointer_indirection(param: Parameter):
+    """The mapped C type needs an extra pointer level."""
+    return (
+        param.type != "string"
+        and not param.type.startswith("array[string")
+        and (
+            param.intent == "out"
+            or (param.intent == "inout" and not param.type.startswith("array"))
+        )
+    )
